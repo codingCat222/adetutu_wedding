@@ -22,8 +22,9 @@ adminRouter.post("/login", loginLimiter, async (req, res) => {
   const admin = await prisma.admin.findUnique({ where: { email: body.data.email.toLowerCase() } });
   const ok = await bcrypt.compare(body.data.password, admin?.passwordHash ?? DUMMY_HASH);
   if (!admin || !ok) throw new HttpError(401, "Invalid email or password.");
-  res.cookie(ADMIN_COOKIE, signAdminToken(admin.id), adminCookieOptions());
-  res.json({ admin: { id: admin.id, email: admin.email } });
+  const token = signAdminToken(admin.id);
+  res.cookie(ADMIN_COOKIE, token, adminCookieOptions());
+  res.json({ admin: { id: admin.id, email: admin.email }, token });
 });
 
 adminRouter.post("/logout", (_req, res) => {

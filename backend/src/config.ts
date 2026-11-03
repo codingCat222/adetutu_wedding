@@ -22,8 +22,20 @@ if (!parsed.success) {
   process.exit(1);
 }
 
+const DEFAULT_ORIGINS = [
+  "http://localhost:5173",
+  "https://adetutu-wedding.vercel.app",
+  "https://wedding.piitonline.com",
+  "https://www.wedding.piitonline.com",
+];
+
 export const config = {
   ...parsed.data,
   isProd: parsed.data.NODE_ENV === "production",
-  clientOrigins: parsed.data.CLIENT_ORIGINS.split(",").map((s) => s.trim()).filter(Boolean),
+  clientOrigins: Array.from(
+    new Set([
+      ...DEFAULT_ORIGINS,
+      ...parsed.data.CLIENT_ORIGINS.split(",").map((s) => s.trim().replace(/\/+$/, "")).filter(Boolean),
+    ]),
+  ),
 };

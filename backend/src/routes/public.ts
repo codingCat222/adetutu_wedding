@@ -24,9 +24,9 @@ function invitationCookieOptions() {
   };
 }
 
-/** Looks up a live (unconsumed, unexpired) session for the request's cookie, or null. */
+/** Looks up a live (unconsumed, unexpired) session for the request's cookie or header, or null. */
 async function findLiveSession(req: Request) {
-  const token = req.cookies?.[INVITATION_COOKIE];
+  const token = req.cookies?.[INVITATION_COOKIE] || req.get("x-invitation-token");
   if (typeof token !== "string" || token.length < 20 || token.length > 100) return null;
   const session = await prisma.invitationSession.findUnique({
     where: { tokenHash: hashToken(token) },
@@ -56,7 +56,7 @@ publicRouter.post("/invitations/verify", verifyLimiter, async (req, res) => {
   ]);
 
   res.cookie(INVITATION_COOKIE, token, invitationCookieOptions());
-  res.json({ ok: true, expiresAt });
+  res.json({ ok: true, expiresAt, sessionToken: token });
 });
 
 // GET /api/invitations/session

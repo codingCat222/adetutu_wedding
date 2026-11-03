@@ -22,7 +22,9 @@ export function adminCookieOptions() {
 }
 
 export async function requireAdmin(req: Request, res: Response, next: NextFunction) {
-  const token = req.cookies?.[ADMIN_COOKIE];
+  const authHeader = req.get("authorization");
+  const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7).trim() : undefined;
+  const token = req.cookies?.[ADMIN_COOKIE] || bearerToken;
   if (!token) return res.status(401).json({ message: "Authentication required." });
   try {
     const payload = jwt.verify(token, config.ADMIN_JWT_SECRET, { algorithms: ["HS256"] }) as jwt.JwtPayload;

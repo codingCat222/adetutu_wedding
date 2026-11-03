@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { api } from "../lib/api";
+import { api, setAdminToken } from "../lib/api";
 import { Spinner } from "./ui";
 
 interface Admin { id: string; email: string }
@@ -37,6 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     logout: async () => {
       await api("/admin/logout", { method: "POST" }).catch(() => {});
+      setAdminToken(null);
       setAdmin(null);
     },
   };
