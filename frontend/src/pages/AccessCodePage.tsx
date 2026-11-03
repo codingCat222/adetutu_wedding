@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { ArrowLeft } from "lucide-react";
 import Monogram from "../components/Monogram";
 import { api, ApiError } from "../lib/api";
 
@@ -30,9 +31,13 @@ export default function AccessCodePage() {
 
   return (
     <div className="min-h-screen bg-deep-plum text-ivory flex flex-col">
-      <header className="px-6 sm:px-10 py-6">
+      <header className="px-6 sm:px-10 py-6 flex items-center justify-between">
         <Link to="/" className="inline-flex items-center gap-3">
           <Monogram className="w-8 h-8 text-ivory/80" />
+        </Link>
+        <Link to="/" className="inline-flex items-center gap-2 font-sans text-sm text-ivory/70 hover:text-ivory transition-colors">
+          <ArrowLeft size={16} />
+          Back
         </Link>
       </header>
 

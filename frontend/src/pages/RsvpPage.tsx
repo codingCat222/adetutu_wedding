@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { ArrowLeft } from "lucide-react";
 import Monogram from "../components/Monogram";
 import { api, ApiError } from "../lib/api";
 
@@ -70,9 +71,13 @@ export default function RsvpPage() {
 
   return (
     <div className="min-h-screen bg-ivory">
-      <header className="px-6 sm:px-10 py-6">
+      <header className="px-6 sm:px-10 py-6 flex items-center justify-between">
         <Link to="/" className="inline-flex items-center gap-3 text-deep-plum">
           <Monogram className="w-8 h-8" />
+        </Link>
+        <Link to="/invitation" className="inline-flex items-center gap-2 font-sans text-sm text-deep-plum/70 hover:text-plum transition-colors">
+          <ArrowLeft size={16} />
+          Back
         </Link>
       </header>
 

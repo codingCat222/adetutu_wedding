@@ -52,6 +52,19 @@ export default function Monogram({ className = "", animate = false }: MonogramPr
         <path d="M112 98 L122 98 L142 150 L152 98 L162 98 L142 150 Z" opacity="0" />
         <path d="M128 98 L142 150 L156 98" />
       </g>
+
+      {/* Year mark */}
+      <text
+        x="120"
+        y="186"
+        textAnchor="middle"
+        fill="currentColor"
+        fontFamily="Fraunces, Georgia, serif"
+        fontSize="22"
+        letterSpacing="2"
+      >
+        AV&apos;27
+      </text>
     </svg>
   );
 }
