@@ -35,7 +35,7 @@ services:
     staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
-        value: https://wedding-api.onrender.com   # your API service URL, no trailing slash
+        value: https://adetutu-wedding-1.onrender.com   # your API service URL, no trailing slash
     routes:
       - type: rewrite
         source: /*
