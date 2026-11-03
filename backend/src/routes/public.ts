@@ -17,8 +17,8 @@ const SESSION_INVALID = "Your invitation session has expired. Please enter your 
 function invitationCookieOptions() {
   return {
     httpOnly: true,
-    secure: config.isProd,
-    sameSite: "lax" as const,
+    secure: config.isProd || config.COOKIE_SAMESITE === "none",
+    sameSite: (config.COOKIE_SAMESITE === "auto" ? "lax" : config.COOKIE_SAMESITE === "strict" ? "lax" : config.COOKIE_SAMESITE) as "lax" | "none",
     path: "/api",
     maxAge: config.INVITATION_SESSION_MINUTES * 60 * 1000,
   };

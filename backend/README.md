@@ -33,3 +33,11 @@ Admin: `POST /api/admin/login|logout`, `GET /api/admin/me`, `POST|GET /api/admin
 
 ## Tests
 `npm test` runs the lifecycle + concurrency test against the database in `DATABASE_URL` (use a throwaway database).
+
+## Deploying on Render
+`render.yaml` (repo root) defines a Node web service for the API and a static site for the frontend.
+The frontend calls the API directly using `VITE_API_URL`, and the API uses `COOKIE_SAMESITE=none` for cross-site cookies.
+1. Push the repo to GitHub/GitLab, then in Render: **New → Blueprint** and select it.
+2. If your API service ends up with a different URL than `https://wedding-api.onrender.com`, edit the `/api/*` rewrite in `render.yaml` (or in the static site's *Redirects/Rewrites* settings).
+3. On `wedding-api` set `DATABASE_URL` and `CLIENT_ORIGINS` (the static site's `https://...onrender.com` URL). Your SQL Server must accept connections from Render.
+4. Migrations run automatically on each start (`prisma migrate deploy`). Seed the admin once from your machine with `npm run seed`, pointed at the same database.

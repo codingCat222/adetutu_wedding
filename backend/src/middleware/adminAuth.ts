@@ -14,8 +14,8 @@ export function signAdminToken(adminId: string): string {
 export function adminCookieOptions() {
   return {
     httpOnly: true,
-    secure: config.isProd,
-    sameSite: (config.isProd ? "strict" : "lax") as "strict" | "lax",
+    secure: config.isProd || config.COOKIE_SAMESITE === "none",
+    sameSite: (config.COOKIE_SAMESITE === "auto" ? (config.isProd ? "strict" : "lax") : config.COOKIE_SAMESITE) as "strict" | "lax" | "none",
     path: "/api/admin",
     maxAge: config.ADMIN_SESSION_HOURS * 3600 * 1000,
   };

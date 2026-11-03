@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "prisma generate && tsc -p tsconfig.json",
-    "start": "node dist/server.js",
+    "build": "prisma generate && tsc -p tsconfig.build.json",
+    "start": "prisma migrate deploy && node dist/server.js",
     "typecheck": "tsc --noEmit",
     "prisma:generate": "prisma generate",
     "migrate:dev": "prisma migrate dev",
@@ -14,7 +14,9 @@
     "seed": "tsx prisma/seed.ts",
     "test": "vitest run"
   },
-  "prisma": { "seed": "tsx prisma/seed.ts" },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "dependencies": {
     "@prisma/client": "^6.9.0",
     "bcryptjs": "^2.4.3",
@@ -25,6 +27,7 @@
     "express-rate-limit": "^7.5.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
+    "prisma": "^6.9.0",
     "zod": "^3.25.0"
   },
   "devDependencies": {
@@ -35,10 +38,12 @@
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.15.0",
     "@types/supertest": "^6.0.3",
-    "prisma": "^6.9.0",
     "supertest": "^7.1.0",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3",
     "vitest": "^3.2.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

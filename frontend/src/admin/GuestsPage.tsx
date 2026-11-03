@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Download, Search } from "lucide-react";
-import { api, ApiError } from "../lib/api";
+import { api, apiUrl, ApiError } from "../lib/api";
 import { Spinner, StatusBadge, btnGhost, downloadBlob, fmtDate, inputCls, useToast } from "./ui";
 
 interface Guest { id: string; fullName: string; phoneNumber: string; email: string | null; numberOfAttendees: number; attendanceStatus: string; capGeleInterest: string; createdAt: string }
@@ -44,7 +44,7 @@ export default function GuestsPage() {
 
   async function exportCsv() {
     try {
-      const res = await fetch(`/api/admin/guests/export?${query()}`, { credentials: "include" });
+      const res = await fetch(apiUrl(`/admin/guests/export?${query()}`), { credentials: "include" });
       if (!res.ok) throw new Error();
       downloadBlob("guests.csv", await res.blob(), "text/csv");
     } catch {

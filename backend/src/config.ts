@@ -10,6 +10,8 @@ const schema = z.object({
   SESSION_TOKEN_SECRET: z.string().min(32, "SESSION_TOKEN_SECRET must be at least 32 characters"),
   ADMIN_SESSION_HOURS: z.coerce.number().positive().default(8),
   INVITATION_SESSION_MINUTES: z.coerce.number().positive().default(60),
+  // "none" is required when the frontend and API are on different sites (e.g. two onrender.com URLs).
+  COOKIE_SAMESITE: z.enum(["auto", "none", "lax", "strict"]).default("auto"),
   TRUST_PROXY: z.coerce.number().int().default(0),
 });
 

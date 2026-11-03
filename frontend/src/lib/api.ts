@@ -1,3 +1,8 @@
+// Empty in local dev (Vite proxies /api). In production set VITE_API_URL to the API origin,
+// e.g. https://wedding-api.onrender.com (no trailing slash, no /api).
+const API_BASE = ((import.meta.env.VITE_API_URL as string | undefined) ?? "").replace(/\/+$/, "");
+export const apiUrl = (path: string) => `${API_BASE}/api${path}`;
+
 export class ApiError extends Error {
   status: number;
   fieldErrors?: Record<string, string>;
@@ -11,7 +16,7 @@ export class ApiError extends Error {
 export async function api<T = unknown>(path: string, options: { method?: string; body?: unknown } = {}): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(`/api${path}`, {
+    res = await fetch(apiUrl(path), {
       method: options.method ?? "GET",
       credentials: "include",
       headers: options.body !== undefined ? { "Content-Type": "application/json" } : undefined,
