@@ -1,0 +1,69 @@
+// SQL Server does not support native enums in Prisma, so status fields are
+// strings constrained by CHECK constraints in the migration and by the
+// application layer (see src/lib/constants.ts).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String   @id @default(uuid()) @db.UniqueIdentifier
+  email        String   @unique @db.NVarChar(255)
+  passwordHash String   @db.NVarChar(255)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model InvitationCode {
+  id         String    @id @default(uuid()) @db.UniqueIdentifier
+  code       String    @unique @db.NVarChar(32)
+  status     String    @default("UNUSED") @db.NVarChar(16) // UNUSED | USED | REVOKED
+  createdAt  DateTime  @default(now())
+  redeemedAt DateTime?
+  revokedAt  DateTime?
+
+  guest    Guest?
+  sessions InvitationSession[]
+
+  @@index([status, createdAt])
+}
+
+model Guest {
+  id                  String   @id @default(uuid()) @db.UniqueIdentifier
+  fullName            String   @db.NVarChar(120)
+  phoneNumber         String   @db.NVarChar(32)
+  email               String?  @db.NVarChar(255)
+  numberOfAttendees   Int
+  attendanceStatus    String   @db.NVarChar(16) // ATTENDING | NOT_ATTENDING
+  dietaryRequirements String?  @db.NVarChar(500)
+  specialMessage      String?  @db.NVarChar(2000)
+  capGeleInterest     String   @default("NONE") @db.NVarChar(16) // NONE | CAP | GELE
+  invitationCodeId    String   @unique @db.UniqueIdentifier
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  invitationCode InvitationCode @relation(fields: [invitationCodeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([attendanceStatus])
+  @@index([createdAt])
+  @@index([fullName])
+}
+
+model InvitationSession {
+  id               String    @id @default(uuid()) @db.UniqueIdentifier
+  tokenHash        String    @unique @db.NVarChar(64)
+  invitationCodeId String    @db.UniqueIdentifier
+  expiresAt        DateTime
+  consumedAt       DateTime?
+  createdAt        DateTime  @default(now())
+
+  invitationCode InvitationCode @relation(fields: [invitationCodeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([invitationCodeId])
+  @@index([expiresAt])
+}

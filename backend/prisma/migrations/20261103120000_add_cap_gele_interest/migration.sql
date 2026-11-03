@@ -1,0 +1,19 @@
+BEGIN TRY
+
+BEGIN TRAN;
+
+ALTER TABLE [dbo].[Guest] ADD [capGeleInterest] NVARCHAR(16) NOT NULL CONSTRAINT [Guest_capGeleInterest_df] DEFAULT 'NONE';
+EXEC('ALTER TABLE [dbo].[Guest] ADD CONSTRAINT [Guest_capGeleInterest_chk] CHECK ([capGeleInterest] IN (N''NONE'', N''CAP'', N''GELE''))');
+
+COMMIT TRAN;
+
+END TRY
+BEGIN CATCH
+
+IF @@TRANCOUNT > 0
+BEGIN
+    ROLLBACK TRAN;
+END;
+THROW
+
+END CATCH

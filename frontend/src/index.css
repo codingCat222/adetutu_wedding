@@ -1,0 +1,52 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&family=Mrs+Saint+Delafield&display=swap");
+
+@import "tailwindcss";
+
+@theme {
+  --color-plum: #54263F;
+  --color-deep-plum: #351629;
+  --color-olive: #68764A;
+  --color-deep-olive: #414C30;
+  --color-ivory: #F8F6F0;
+  --color-gold: #B9A16A;
+
+  --font-serif: "Fraunces", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-script: "Mrs Saint Delafield", cursive;
+
+  --animate-draw: draw 2.6s ease-out forwards;
+
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #F8F6F0;
+  color: #351629;
+  font-feature-settings: "liga" 1, "kern" 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid #B9A16A;
+  outline-offset: 3px;
+}
