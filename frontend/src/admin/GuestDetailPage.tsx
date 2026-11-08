@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Download } from "lucide-react";
 import { api, ApiError } from "../lib/api";
-import { Spinner, StatusBadge, fmtDate } from "./ui";
+import { Spinner, StatusBadge, btnGhost, fmtDate } from "./ui";
 
 interface Guest {
   id: string; fullName: string; phoneNumber: string; email: string | null; numberOfAttendees: number;
-  attendanceStatus: string; capGeleInterest: string; dietaryRequirements: string | null; specialMessage: string | null;
+  attendanceStatus: string; capGeleInterest: string; paymentProof?: string | null; paymentProofName?: string | null;
+  dietaryRequirements: string | null; specialMessage: string | null;
   invitationCode: string; createdAt: string;
 }
 
@@ -21,6 +22,33 @@ export default function GuestDetailPage() {
       .catch((e) => setError(e instanceof ApiError ? e.message : "Could not load guest."));
   }, [id]);
 
+  function renderPaymentProof(g: Guest) {
+    if (!g.paymentProof) return "—";
+    const filename = g.paymentProofName || `payment-proof-${g.fullName.replace(/\s+/g, "-")}`;
+    const isImage = g.paymentProof.startsWith("data:image/");
+    return (
+      <div className="space-y-3">
+        {isImage && (
+          <a href={g.paymentProof} target="_blank" rel="noreferrer" className="block">
+            <img
+              src={g.paymentProof}
+              alt={`Payment receipt from ${g.fullName}`}
+              className="max-h-72 rounded-sm border border-plum/15 object-contain"
+            />
+          </a>
+        )}
+        <a
+          href={g.paymentProof}
+          download={filename}
+          className={btnGhost}
+        >
+          <Download size={14} />
+          Download Receipt ({filename})
+        </a>
+      </div>
+    );
+  }
+
   const rows: [string, React.ReactNode][] = guest
     ? [
         ["Full Name", guest.fullName],
@@ -28,7 +56,11 @@ export default function GuestDetailPage() {
         ["Email Address", guest.email ?? "—"],
         ["Number of Attendees", guest.numberOfAttendees],
         ["Attendance Status", <StatusBadge key="s" value={guest.attendanceStatus} />],
-        ["Interested in Cap / Gele", { GELE: "Gele", CAP: "Cap", NONE: "Not interested" }[guest.capGeleInterest] ?? "—"],
+        [
+          "Interested in Cap / Gele",
+          { GELE: "Gele (₦10,000)", CAP: "Cap (₦7,000)", NONE: "Not interested" }[guest.capGeleInterest] ?? "—",
+        ],
+        ["Proof of Payment", renderPaymentProof(guest)],
         ["Dietary Requirements", guest.dietaryRequirements ?? "—"],
         ["Special Message", <span key="m" className="whitespace-pre-wrap">{guest.specialMessage ?? "—"}</span>],
         ["Invitation Code Used", <span key="c" className="font-mono">{guest.invitationCode}</span>],
