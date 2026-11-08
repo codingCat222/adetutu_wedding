@@ -18,20 +18,29 @@ const rsvpSchema = z
     capGeleInterest: z.enum(["NONE", "CAP", "GELE"]),
     paymentProof: z.string().optional(),
     paymentProofName: z.string().optional(),
+    paymentSenderName: z.string().optional(),
     dietaryRequirements: z.string().optional(),
     specialMessage: z.string().optional(),
   })
   .superRefine((val, ctx) => {
     if (
       val.attendanceStatus === "ATTENDING" &&
-      (val.capGeleInterest === "CAP" || val.capGeleInterest === "GELE") &&
-      !val.paymentProof
+      (val.capGeleInterest === "CAP" || val.capGeleInterest === "GELE")
     ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["paymentProof"],
-        message: "Please upload your proof of payment for the selected cap or gele.",
-      });
+      if (!val.paymentSenderName?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["paymentSenderName"],
+          message: "Please enter the account/sender name on the bank transfer.",
+        });
+      }
+      if (!val.paymentProof) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["paymentProof"],
+          message: "Please upload your proof of payment for the selected cap or gele.",
+        });
+      }
     }
   });
 
@@ -114,6 +123,7 @@ export default function RsvpPage() {
       capGeleInterest: "NONE",
       paymentProof: "",
       paymentProofName: "",
+      paymentSenderName: "",
     },
   });
 
@@ -349,6 +359,23 @@ export default function RsvpPage() {
                         <span className="text-deep-plum/60 text-xs">Account Name</span>
                         <span className="font-medium text-deep-plum">Adetutu Sanwoolu</span>
                       </div>
+                    </div>
+
+                    <div>
+                      <label htmlFor="paymentSenderName" className={labelClass}>
+                        Sender Name on Bank Transfer <span className="text-plum">*</span>
+                      </label>
+                      <input
+                        id="paymentSenderName"
+                        type="text"
+                        placeholder="e.g. Adewale Adeyemi (name on the account you paid from)"
+                        className={inputClass}
+                        {...register("paymentSenderName")}
+                      />
+                      <p className="mt-1 text-xs text-deep-plum/50 font-sans">
+                        Helps the couple easily identify and verify your transfer.
+                      </p>
+                      {errors.paymentSenderName && <p className={errorClass}>{errors.paymentSenderName.message}</p>}
                     </div>
 
                     <div>

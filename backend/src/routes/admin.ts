@@ -121,7 +121,7 @@ function guestWhere(q: z.infer<typeof guestListQuery>): Prisma.GuestWhereInput {
 
 const guestSummarySelect = {
   id: true, fullName: true, phoneNumber: true, email: true,
-  numberOfAttendees: true, attendanceStatus: true, capGeleInterest: true, createdAt: true,
+  numberOfAttendees: true, attendanceStatus: true, capGeleInterest: true, paymentProofName: true, paymentSenderName: true, createdAt: true,
 } satisfies Prisma.GuestSelect;
 
 adminRouter.get("/guests", async (req, res) => {
@@ -171,8 +171,8 @@ adminRouter.get("/guests/export", async (req, res) => {
     include: { invitationCode: { select: { code: true } } },
   });
   const csv = toCsv(
-    ["Full Name", "Phone Number", "Email", "Attendees", "RSVP Status", "Cap/Gele Interest", "Dietary Requirements", "Special Message", "Invitation Code", "Submitted At"],
-    guests.map((g) => [g.fullName, g.phoneNumber, g.email, g.numberOfAttendees, g.attendanceStatus, g.capGeleInterest, g.dietaryRequirements, g.specialMessage, g.invitationCode.code, g.createdAt.toISOString()]),
+    ["Full Name", "Phone Number", "Email", "Attendees", "RSVP Status", "Cap/Gele Interest", "Sender Name on Transfer", "Payment Proof", "Dietary Requirements", "Special Message", "Invitation Code", "Submitted At"],
+    guests.map((g) => [g.fullName, g.phoneNumber, g.email, g.numberOfAttendees, g.attendanceStatus, g.capGeleInterest, g.paymentSenderName ?? "", g.paymentProof ? "Uploaded" : "None", g.dietaryRequirements, g.specialMessage, g.invitationCode.code, g.createdAt.toISOString()]),
   );
   res.setHeader("Content-Type", "text/csv; charset=utf-8");
   res.setHeader("Content-Disposition", 'attachment; filename="guests.csv"');

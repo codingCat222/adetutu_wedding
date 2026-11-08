@@ -4,7 +4,7 @@ import { Download, Search } from "lucide-react";
 import { api, apiUrl, authHeaders, ApiError } from "../lib/api";
 import { Spinner, StatusBadge, btnGhost, downloadBlob, fmtDate, inputCls, useToast } from "./ui";
 
-interface Guest { id: string; fullName: string; phoneNumber: string; email: string | null; numberOfAttendees: number; attendanceStatus: string; capGeleInterest: string; paymentProofName?: string | null; createdAt: string }
+interface Guest { id: string; fullName: string; phoneNumber: string; email: string | null; numberOfAttendees: number; attendanceStatus: string; capGeleInterest: string; paymentProofName?: string | null; paymentSenderName?: string | null; createdAt: string }
 interface Resp {
   items: Guest[]; total: number; page: number; pageSize: number;
   summary: { totalInvitationsGenerated: number; totalConfirmedGuests: number; totalDeclined: number; totalExpectedAttendees: number; unusedInvitationCodes: number; capInterest: number; geleInterest: number };
@@ -122,14 +122,21 @@ export default function GuestsPage() {
                   <td className="p-3">{g.numberOfAttendees}</td>
                   <td className="p-3"><StatusBadge value={g.attendanceStatus} /></td>
                   <td className="p-3 text-deep-plum/70">
-                    <span>{{ GELE: "Gele (₦10k)", CAP: "Cap (₦7k)", NONE: "—" }[g.capGeleInterest] ?? "—"}</span>
-                    {g.paymentProofName && (
-                      <Link
-                        to={`/admin/guests/${g.id}`}
-                        className="ml-2 inline-block rounded-full bg-olive/15 text-deep-olive px-2 py-0.5 text-xs font-medium hover:bg-olive/25"
-                      >
-                        Receipt ✓
-                      </Link>
+                    <div>
+                      <span>{{ GELE: "Gele (₦10k)", CAP: "Cap (₦7k)", NONE: "—" }[g.capGeleInterest] ?? "—"}</span>
+                      {g.paymentProofName && (
+                        <Link
+                          to={`/admin/guests/${g.id}`}
+                          className="ml-2 inline-block rounded-full bg-olive/15 text-deep-olive px-2 py-0.5 text-xs font-medium hover:bg-olive/25"
+                        >
+                          Receipt ✓
+                        </Link>
+                      )}
+                    </div>
+                    {g.paymentSenderName && (
+                      <div className="text-xs text-deep-plum/50 truncate max-w-[180px]" title={`Paid by: ${g.paymentSenderName}`}>
+                        Paid by: {g.paymentSenderName}
+                      </div>
                     )}
                   </td>
                   <td className="p-3 text-deep-plum/70 whitespace-nowrap">{fmtDate(g.createdAt)}</td>

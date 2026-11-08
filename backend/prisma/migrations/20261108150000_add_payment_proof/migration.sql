@@ -1,0 +1,19 @@
+BEGIN TRY
+
+BEGIN TRAN;
+
+ALTER TABLE [dbo].[Guest] ADD [paymentProof] NVARCHAR(MAX), [paymentProofName] NVARCHAR(255), [paymentSenderName] NVARCHAR(120);
+
+COMMIT TRAN;
+
+END TRY
+BEGIN CATCH
+
+IF @@TRANCOUNT > 0
+BEGIN
+    ROLLBACK TRAN;
+END;
+THROW
+
+END CATCH
+

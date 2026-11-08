@@ -1,5 +1,5 @@
-// Empty in local dev (Vite proxies /api). In production set VITE_API_URL to the API origin,
-// e.g. https://adetutu-wedding-1.onrender.com (no trailing slash, no /api).
+// Uses VITE_API_URL when set (e.g. https://adetutu-wedding-1.onrender.com),
+// or relative /api (proxied by Vite to http://localhost:4000) when empty.
 const API_BASE = ((import.meta.env.VITE_API_URL as string | undefined) ?? "").replace(/\/+$/, "");
 export const apiUrl = (path: string) => `${API_BASE}/api${path}`;
 

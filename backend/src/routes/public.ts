@@ -95,6 +95,15 @@ const rsvpSchema = z
     numberOfAttendees: z.coerce.number().int().min(1).max(MAX_ATTENDEES).optional(),
     attendanceStatus: z.enum([AttendanceStatus.ATTENDING, AttendanceStatus.NOT_ATTENDING]),
     capGeleInterest: z.enum([CapGeleInterest.NONE, CapGeleInterest.CAP, CapGeleInterest.GELE]).default(CapGeleInterest.NONE),
+    paymentProof: z
+      .string()
+      .max(5_000_000, "Payment proof file is too large.")
+      .regex(/^data:(image\/(jpeg|jpg|png|webp|gif)|application\/pdf);base64,[A-Za-z0-9+/=]+$/, "Please upload a valid image or PDF receipt.")
+      .nullish()
+      .or(z.literal(""))
+      .transform((v) => (v ? v : null)),
+    paymentProofName: optionalText(255),
+    paymentSenderName: optionalText(120),
     dietaryRequirements: optionalText(500),
     specialMessage: optionalText(2000),
   })
@@ -109,6 +118,14 @@ publicRouter.post("/guests/rsvp", rsvpLimiter, async (req, res) => {
   }
   const d = parsed.data;
   const attending = d.attendanceStatus === AttendanceStatus.ATTENDING;
+  const wantsCapGele = attending && (d.capGeleInterest === CapGeleInterest.CAP || d.capGeleInterest === CapGeleInterest.GELE);
+  if (wantsCapGele && !d.paymentProof) {
+    throw new HttpError(
+      400,
+      "Please upload your proof of payment for the selected cap or gele.",
+      JSON.stringify({ paymentProof: "Please upload your proof of payment." }),
+    );
+  }
   // Each invitation is for exactly one guest; ignore any client-supplied count.
   const attendees = attending ? 1 : 0;
 
@@ -139,6 +156,9 @@ publicRouter.post("/guests/rsvp", rsvpLimiter, async (req, res) => {
           numberOfAttendees: attendees,
           attendanceStatus: d.attendanceStatus,
           capGeleInterest: attending ? d.capGeleInterest : CapGeleInterest.NONE,
+          paymentProof: wantsCapGele ? d.paymentProof : null,
+          paymentProofName: wantsCapGele ? (d.paymentProofName ?? "receipt") : null,
+          paymentSenderName: wantsCapGele ? d.paymentSenderName : null,
           dietaryRequirements: attending ? d.dietaryRequirements : null,
           specialMessage: d.specialMessage,
           invitationCodeId: session.invitationCodeId,

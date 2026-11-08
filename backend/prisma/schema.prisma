@@ -43,6 +43,9 @@ model Guest {
   dietaryRequirements String?  @db.NVarChar(500)
   specialMessage      String?  @db.NVarChar(2000)
   capGeleInterest     String   @default("NONE") @db.NVarChar(16) // NONE | CAP | GELE
+  paymentProof        String?  @db.NVarChar(Max)
+  paymentProofName    String?  @db.NVarChar(255)
+  paymentSenderName   String?  @db.NVarChar(120)
   invitationCodeId    String   @unique @db.UniqueIdentifier
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt

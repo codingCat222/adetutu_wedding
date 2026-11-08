@@ -15,7 +15,7 @@ export function createApp() {
 
   app.use(helmet());
   app.use(cors({ origin: config.clientOrigins, credentials: true }));
-  app.use(express.json({ limit: "20kb" }));
+  app.use(express.json({ limit: "6mb" }));
   app.use(cookieParser());
   app.use("/api", (_req, res, next) => {
     res.setHeader("Cache-Control", "no-store");

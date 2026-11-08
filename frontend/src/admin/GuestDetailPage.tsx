@@ -7,6 +7,7 @@ import { Spinner, StatusBadge, btnGhost, fmtDate } from "./ui";
 interface Guest {
   id: string; fullName: string; phoneNumber: string; email: string | null; numberOfAttendees: number;
   attendanceStatus: string; capGeleInterest: string; paymentProof?: string | null; paymentProofName?: string | null;
+  paymentSenderName?: string | null;
   dietaryRequirements: string | null; specialMessage: string | null;
   invitationCode: string; createdAt: string;
 }
@@ -60,6 +61,7 @@ export default function GuestDetailPage() {
           "Interested in Cap / Gele",
           { GELE: "Gele (₦10,000)", CAP: "Cap (₦7,000)", NONE: "Not interested" }[guest.capGeleInterest] ?? "—",
         ],
+        ["Sender Name on Transfer", guest.paymentSenderName ?? "—"],
         ["Proof of Payment", renderPaymentProof(guest)],
         ["Dietary Requirements", guest.dietaryRequirements ?? "—"],
         ["Special Message", <span key="m" className="whitespace-pre-wrap">{guest.specialMessage ?? "—"}</span>],
