@@ -1,0 +1,9 @@
+{
+  "name": "wedding-monorepo",
+  "private": true,
+  "scripts": {
+    "build": "npm --prefix backend install --include=dev && npm --prefix backend run build",
+    "start": "npm --prefix backend start"
+  }
+}
+
